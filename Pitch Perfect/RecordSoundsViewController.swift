@@ -24,8 +24,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     }
     
     override func viewWillAppear(animated: Bool) {
-        //TODO: Hide Stop Button
-        
+        btnStop.hidden = true
     }
 
     override func didReceiveMemoryWarning() {
