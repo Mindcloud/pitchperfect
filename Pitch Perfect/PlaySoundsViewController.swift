@@ -18,6 +18,8 @@ class PlaySoundsViewController: UIViewController {
    
     func playSound(playSpeed: Float) {
         audioPlayer.stop()
+        audioEngine.stop()
+        audioEngine.reset()
         audioPlayer.currentTime = 0.0
         audioPlayer.enableRate = true
         audioPlayer.rate = playSpeed
@@ -34,7 +36,6 @@ class PlaySoundsViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 
@@ -48,6 +49,8 @@ class PlaySoundsViewController: UIViewController {
     
     @IBAction func playStop(sender: UIButton) {
         audioPlayer.stop()
+        audioEngine.stop()
+        audioEngine.reset()
     }
     
     @IBAction func playChipmunkAudio(sender: UIButton) {
