@@ -55,7 +55,6 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.meteringEnabled = true
         audioRecorder.prepareToRecord()
         audioRecorder.record()
-        
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -89,6 +88,5 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         
         instructionLabel.text = "Tap Mic to Start Recording"
     }
-    
 }
 

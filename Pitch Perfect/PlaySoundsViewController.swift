@@ -37,7 +37,6 @@ class PlaySoundsViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
 
     @IBAction func playSoundSlow(sender: UIButton) {
         playSound(0.5)
@@ -80,7 +79,5 @@ class PlaySoundsViewController: UIViewController {
         try! audioEngine.start()
         
         audioPlayerNode.play()
-        
     }
-
 }
