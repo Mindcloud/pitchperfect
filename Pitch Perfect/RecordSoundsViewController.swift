@@ -19,17 +19,9 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     var audioRecorder:AVAudioRecorder!
     var recordedAudio:RecordedAudio!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func viewWillAppear(animated: Bool) {
         btnStop.hidden = true
         instructionLabel.text = "Tap Mic to Start Recording"
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
 
     @IBAction func recordAudio(sender: UIButton) {
@@ -67,14 +59,21 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         if(flag){
-            recordedAudio = RecordedAudio(recorderUrl: recorder.url)
-            self.performSegueWithIdentifier("stopRecording", sender: recordedAudio)
+            recordedAudio = RecordedAudio(recorderUrl: recorder.url, title: recorder.url.lastPathComponent!)
+            performSegueWithIdentifier("stopRecording", sender: recordedAudio)
         }
         else{
             print("Recording was not successful")
             recordButton.enabled = true
             btnStop.hidden = true
             lblRecording.hidden = true
+            
+            // Show alert if not successful
+            let alert = UIAlertView()
+            alert.title = "Alert"
+            alert.message = "Recording was not successful"
+            alert.addButtonWithTitle("Ok")
+            alert.show()
         }
     }
 

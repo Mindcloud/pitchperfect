@@ -15,15 +15,22 @@ class PlaySoundsViewController: UIViewController {
     var audioEngine:AVAudioEngine!
     var receivedAudio:RecordedAudio!
     var audioFile: AVAudioFile!
+    var audioSession:AVAudioSession = AVAudioSession.sharedInstance()
    
+    @IBOutlet weak var wetDrySlider: UISlider!
+
     func playSound(playSpeed: Float) {
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAndResetAudio()
         audioPlayer.currentTime = 0.0
         audioPlayer.enableRate = true
         audioPlayer.rate = playSpeed
         audioPlayer.play()
+    }
+    
+    func stopAndResetAudio() {
+        audioPlayer.stop()
+        audioEngine.stop()
+        audioEngine.reset()
     }
     
     override func viewDidLoad() {
@@ -32,10 +39,8 @@ class PlaySoundsViewController: UIViewController {
         audioEngine = AVAudioEngine()
         audioFile = try! AVAudioFile(forReading: receivedAudio.filePathUrl)
         
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+        // Play via speaker
+        try! audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: AVAudioSessionCategoryOptions.DefaultToSpeaker)
     }
 
     @IBAction func playSoundSlow(sender: UIButton) {
@@ -47,9 +52,7 @@ class PlaySoundsViewController: UIViewController {
     }
     
     @IBAction func playStop(sender: UIButton) {
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAndResetAudio()
     }
     
     @IBAction func playChipmunkAudio(sender: UIButton) {
@@ -60,10 +63,12 @@ class PlaySoundsViewController: UIViewController {
         playAudioWithVariablePith(-1000)
     }
     
+    @IBAction func PlayLargeChamberSound(sender: UIButton) {
+        playAudioWithReverb(wetDrySlider.value)
+    }
+    
     func playAudioWithVariablePith(pitch: Float){
-        audioPlayer.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        stopAndResetAudio()
         
         let audioPlayerNode = AVAudioPlayerNode()
         audioEngine.attachNode(audioPlayerNode)
@@ -74,6 +79,26 @@ class PlaySoundsViewController: UIViewController {
         
         audioEngine.connect(audioPlayerNode, to: changePitchEffect, format: nil)
         audioEngine.connect(changePitchEffect, to: audioEngine.outputNode, format: nil)
+        
+        audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
+        try! audioEngine.start()
+        
+        audioPlayerNode.play()
+    }
+    
+    func playAudioWithReverb(wetDry: Float) {
+        stopAndResetAudio()
+        
+        let audioPlayerNode = AVAudioPlayerNode()
+        audioEngine.attachNode(audioPlayerNode)
+        
+        let addReverb = AVAudioUnitReverb()
+        addReverb.loadFactoryPreset(AVAudioUnitReverbPreset.LargeHall2)
+        addReverb.wetDryMix = wetDry
+        audioEngine.attachNode(addReverb)
+        
+        audioEngine.connect(audioPlayerNode, to: addReverb, format: nil)
+        audioEngine.connect(addReverb, to: audioEngine.outputNode, format: nil)
         
         audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: nil)
         try! audioEngine.start()
